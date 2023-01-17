@@ -18,6 +18,10 @@ class Menu_OUT(Menu):
     dishes_count: int = 0
 
 
+class Submenus_OUT(Menu):
+    id: int
+    dishes_count: int = 0
+
 
 
 

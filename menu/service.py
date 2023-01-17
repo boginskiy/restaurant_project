@@ -1,7 +1,6 @@
 from sqlalchemy.orm import Session
 from starlette.responses import JSONResponse
-
-from .models import Menu_DB
+from .models import Menu_DB, Sub_Menu_DB, Dish_DB
 from .schemas import Menu
 
 
@@ -10,9 +9,8 @@ def get_menus(db: Session, menu_id=None):
         return db.query(Menu_DB).all()
     menu = db.query(Menu_DB).get((menu_id,))
     if not menu:
-        return JSONResponse(
-            status_code=404,
-            content={"detail": "menu not found"})
+        return JSONResponse(status_code=404,
+                            content={"detail": "menu not found"})
     return menu
 
 
@@ -27,9 +25,8 @@ def create_menu(db: Session, item: Menu):
 def patch_menu_detail(db: Session, item: Menu, menu_id: int):
     menu = db.query(Menu_DB).get((menu_id,))
     if menu == None:
-        return JSONResponse(
-            status_code=404,
-            content={"detail": "menu not found"})
+        return JSONResponse(status_code=404,
+                            content={"detail": "menu not found"})
     menu.title = item.dict()["title"]
     menu.description = item.dict()["description"]
     db.commit()
@@ -40,15 +37,56 @@ def patch_menu_detail(db: Session, item: Menu, menu_id: int):
 def delete_menu_detail(db: Session, menu_id: int):
     menu = db.query(Menu_DB).get((menu_id,))
     if menu == None:
-        return JSONResponse(
-            status_code=404,
-            content={"message": "User not found"})
+        return JSONResponse(status_code=404,
+                            content={"message": "User not found"})
     db.delete(menu)
     db.commit()
     return {"status": "true", "message": "The menu has been deleted"}
 
 
+def get_submenus_detail(db: Session, menu_id: int, submenu_id=None):
+    if not submenu_id:
+        submenus = db.query(Sub_Menu_DB).filter(Sub_Menu_DB.menu == menu_id).all()
+        return submenus
+    submenus = db.query(Sub_Menu_DB).filter(
+        Sub_Menu_DB.menu == menu_id, Sub_Menu_DB.id == submenu_id).first()
+    if not submenus:
+        return JSONResponse(status_code=404,
+                            content={"detail": "submenu not found"})
+    return submenus
 
+
+def create_submenu(db: Session, menu_id: int, item: Menu):
+    new_submenus = Sub_Menu_DB(**item.dict(), menu=menu_id)
+    db.add(new_submenus)
+    db.commit()
+    db.refresh(new_submenus)
+    return new_submenus
+
+
+def patch_submenu_detail(db: Session, item: Menu, submenu_id: int, menu_id: int):
+    submenu = db.query(Sub_Menu_DB).filter(
+        Sub_Menu_DB.menu == menu_id, Sub_Menu_DB.id == submenu_id).first()
+    if not submenu:
+        return JSONResponse(status_code=404,
+                            content={"detail": "submenu not found"})
+
+    submenu.title = item.dict()["title"]
+    submenu.description = item.dict()["description"]
+    db.commit()
+    db.refresh(submenu)
+    return submenu
+
+
+def delete_submenu_detail(db: Session, submenu_id: int, menu_id: int):
+    submenu = db.query(Sub_Menu_DB).filter(
+        Sub_Menu_DB.menu == menu_id, Sub_Menu_DB.id == submenu_id).first()
+    if not submenu:
+        return JSONResponse(status_code=404,
+                            content={"message": "User not found"})
+    db.delete(submenu)
+    db.commit()
+    return {"status": "true", "message": "The submenu has been deleted"}
 
 
 
