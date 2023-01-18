@@ -11,16 +11,21 @@ class Menu(BaseModel):
     class Config:
         orm_mode = True
 
-
+# Скорее всего это расчитываетя тут !
 class Menu_OUT(Menu):
     id: int
-    submenus_count: int = 0
+    submenus_count: int = 0 # это !!!
     dishes_count: int = 0
 
 
 class Submenus_OUT(Menu):
     id: int
     dishes_count: int = 0
+
+
+class Dishes_OUT(Menu):
+    id: int
+    price: float = 0
 
 
 

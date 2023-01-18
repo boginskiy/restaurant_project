@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from core.utils import get_db
 from typing import List
 from . import service
-from .schemas import Menu, Menu_OUT, Submenus_OUT
+from .schemas import Menu, Menu_OUT, Submenus_OUT, Dishes_OUT
 
 router = APIRouter()
 
@@ -17,6 +17,7 @@ def get_menus_list(db: Session = Depends(get_db)):
 @router.get("/menus/{menu_id}", response_model=Menu_OUT)
 def get_menu(menu_id: int, db: Session = Depends(get_db)):
     menu = service.get_menus(db, menu_id)
+    print(menu)
     return menu
 
 
@@ -73,3 +74,15 @@ def patch_submenu(menu_id: int,
 def patch_submenu(menu_id: int, submenu_id: int, db: Session = Depends(get_db)):
     submenu = service.delete_submenu_detail(db, submenu_id, menu_id)
     return submenu
+
+
+@router.get("/menus/{menu_id}/submenus/{submenu_id}/dishes", response_model=List[Dishes_OUT])
+def get_dishes(menu_id: int, submenu_id: int, db: Session = Depends(get_db)):
+    dishes = service.get_dishes_list(db, submenu_id, menu_id)
+    return dishes
+
+
+# @router.get("/menus/{menu_id}/submenus/{submenu_id}/dishes/{dish_id}")
+# def get_dish(menu_id: int, submenu_id: int, dish_id: int, db: Session = Depends(get_db)):
+#     dish = service.get_dishes_list(db, submenu_id, menu_id, dish_id)
+#     return dish

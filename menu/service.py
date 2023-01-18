@@ -3,11 +3,13 @@ from starlette.responses import JSONResponse
 from .models import Menu_DB, Sub_Menu_DB, Dish_DB
 from .schemas import Menu
 
-
+# Cделать классы, сделать расчет доп. полей
 def get_menus(db: Session, menu_id=None):
     if not menu_id:
         return db.query(Menu_DB).all()
     menu = db.query(Menu_DB).get((menu_id,))
+    count = db.query(Sub_Menu_DB).filter(Sub_Menu_DB.menu == menu_id).count()
+    print('aaaaa', count)
     if not menu:
         return JSONResponse(status_code=404,
                             content={"detail": "menu not found"})
@@ -87,6 +89,15 @@ def delete_submenu_detail(db: Session, submenu_id: int, menu_id: int):
     db.delete(submenu)
     db.commit()
     return {"status": "true", "message": "The submenu has been deleted"}
+
+
+def get_dishes_list(db: Session, submenu_id: int, menu_id: int, dish_id=None):
+    if not dish_id:
+        res = db.query(Dish_DB, Sub_Menu_DB).join(Sub_Menu_DB).filter(
+            Sub_Menu_DB.menu == menu_id, Dish_DB.submenu == submenu_id).all()
+        dishes = (i[0] for i in res)
+        return dishes
+
 
 
 
