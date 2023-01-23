@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Any
 from pydantic import BaseModel, validator, Field
 from datetime import date
 from typing import Optional
@@ -11,11 +11,11 @@ class Menu(BaseModel):
     class Config:
         orm_mode = True
 
-# Скорее всего это расчитываетя тут !
+
 class Menu_OUT(Menu):
     id: int
-    submenus_count: int = 0 # это !!!
-    dishes_count: int = 0
+    submenus_count: int = None
+    dishes_count: int = None
 
 
 class Submenus_OUT(Menu):
@@ -26,9 +26,6 @@ class Submenus_OUT(Menu):
 class Dishes_OUT(Menu):
     id: int
     price: float = 0
-
-
-
 
 
 # -----
