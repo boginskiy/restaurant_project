@@ -23,6 +23,10 @@ class Submenus_OUT(Menu):
     dishes_count: int = 0
 
 
+class Dishes_IN(Menu):
+    price: float = 0
+
+
 class Dishes_OUT(Menu):
     id: int
     price: float = 0
