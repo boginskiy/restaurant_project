@@ -4,7 +4,6 @@ from core.utils import get_db
 from typing import List
 from . import service
 from .schemas import Menu, Menu_OUT, Submenus_OUT, Dishes_OUT, Dishes_IN
-from .models import *
 
 router = APIRouter()
 
@@ -35,8 +34,8 @@ def patch_menu(item: Menu, menu_id: int, db: Session = Depends(get_db)):
 
 @router.delete("/menus/{menu_id}")
 def delete_menu(menu_id: int, db: Session = Depends(get_db)):
-    menu = service.drop_menu(db, menu_id)
-    return menu
+    message = service.drop_menu(db, menu_id)
+    return message
 
 
 @router.get("/menus/{menu_id}/submenus",
@@ -70,8 +69,8 @@ def patch_submenu(menu_id: int, submenu_id: int,
 
 @router.delete("/menus/{menu_id}/submenus/{submenu_id}")
 def delete_submenu(menu_id: int, submenu_id: int, db: Session = Depends(get_db)):
-    submenu = service.drop_submenu(db, submenu_id, menu_id)
-    return submenu
+    message = service.drop_submenu(db, submenu_id, menu_id)
+    return message
 
 
 @router.get("/menus/{menu_id}/submenus/{submenu_id}/dishes",
@@ -105,3 +104,10 @@ def patch_dish(
         item: Dishes_IN, db: Session = Depends(get_db)):
     dish = service.update_dish(db, item, submenu_id, menu_id, dish_id)
     return dish
+
+
+@router.delete("/menus/{menu_id}/submenus/{submenu_id}/dishes/{dish_id}")
+def delete_dish(menu_id: int, submenu_id: int, dish_id: int,
+                db: Session = Depends(get_db)):
+    message = service.drop_dish(db, menu_id, submenu_id, dish_id)
+    return message

@@ -1,7 +1,4 @@
-from typing import List, Any
-from pydantic import BaseModel, validator, Field
-from datetime import date
-from typing import Optional
+from pydantic import BaseModel
 
 
 class Menu(BaseModel):
@@ -20,7 +17,7 @@ class Menu_OUT(Menu):
 
 class Submenus_OUT(Menu):
     id: int
-    dishes_count: int = 0
+    dishes_count: int = None
 
 
 class Dishes_IN(Menu):
@@ -30,7 +27,3 @@ class Dishes_IN(Menu):
 class Dishes_OUT(Menu):
     id: int
     price: float = 0
-
-
-# -----
-# id: Optional[int]

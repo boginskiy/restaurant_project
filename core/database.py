@@ -1,14 +1,14 @@
+import os
+from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-# вынести в .env!
+load_dotenv()
 
-HOST_DB = '0.0.0.0'
-PORT = 5432
-POSTGRES_USER = 'postgres'
-POSTGRES_PASSWORD = 'SkilineR34'
-POSTGRES_DB = 'postgres'
+POSTGRES_USER = os.getenv('POSTGRES_USER')
+POSTGRES_PASSWORD = os.getenv('POSTGRES_PASSWORD')
+POSTGRES_DB = os.getenv('POSTGRES_DB')
 
 SQLALCHEMY_DATABASE_URL=f'postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@localhost:5432/{POSTGRES_DB}'
 

@@ -41,7 +41,7 @@ def drop_menu(db: Session, menu_id: int):
     menu = db.query(Menu_DB).get((menu_id,))
     if menu == None:
         return JSONResponse(status_code=404,
-                            content={"message": "User not found"})
+                            content={"message": "menu not found"})
     db.delete(menu)
     db.commit()
     return {"status": "true", "message": "The menu has been deleted"}
@@ -86,7 +86,7 @@ def drop_submenu(db: Session, submenu_id: int, menu_id: int):
         Sub_Menu_DB.menu_id == menu_id, Sub_Menu_DB.id == submenu_id).first()
     if not submenu:
         return JSONResponse(status_code=404,
-                            content={"message": "User not found"})
+                            content={"message": "submenu not found"})
     db.delete(submenu)
     db.commit()
     return {"status": "true", "message": "The submenu has been deleted"}
@@ -94,12 +94,13 @@ def drop_submenu(db: Session, submenu_id: int, menu_id: int):
 
 def read_dishes(db: Session, submenu_id: int, menu_id: int, dish_id=None):
     if not dish_id:
-        dishes = db.query(Dish_DB).join(Sub_Menu_DB).filter(
-            Dish_DB.submenu_id == submenu_id, Sub_Menu_DB.menu_id == menu_id).all()
+        dishes = db.query(Dish_DB).join(Sub_Menu_DB).filter(Dish_DB.submenu_id == submenu_id,
+                                                            Sub_Menu_DB.menu_id == menu_id).all()
         return dishes
 
     dish = db.query(Dish_DB).join(Sub_Menu_DB).filter(Dish_DB.id == dish_id,
-        Dish_DB.submenu_id == submenu_id, Sub_Menu_DB.menu_id == menu_id).first()
+                                                      Dish_DB.submenu_id == submenu_id,
+                                                      Sub_Menu_DB.menu_id == menu_id).first()
 
     if not dish:
         return JSONResponse(status_code=404,
@@ -108,8 +109,8 @@ def read_dishes(db: Session, submenu_id: int, menu_id: int, dish_id=None):
 
 
 def create_dish(db: Session, item: Dishes_IN, submenu_id: int, menu_id: int):
-    submenu = db.query(Sub_Menu_DB).filter(
-        Sub_Menu_DB.menu_id == menu_id, Sub_Menu_DB.id == submenu_id).first()
+    submenu = db.query(Sub_Menu_DB).filter(Sub_Menu_DB.menu_id == menu_id,
+                                           Sub_Menu_DB.id == submenu_id).first()
     if not submenu:
         return JSONResponse(status_code=404,
                             content={"detail": "submenu and menu not correct"})
@@ -125,7 +126,8 @@ def update_dish(db: Session, item: Dishes_IN,
                 submenu_id: int, menu_id: int, dish_id: int):
 
     dish = db.query(Dish_DB).join(Sub_Menu_DB).filter(Dish_DB.id == dish_id,
-        Dish_DB.submenu_id == submenu_id, Sub_Menu_DB.menu_id == menu_id).first()
+                                                      Dish_DB.submenu_id == submenu_id,
+                                                      Sub_Menu_DB.menu_id == menu_id).first()
     if not dish:
         return JSONResponse(status_code=404,
                             content={"detail": "dish not found"})
@@ -136,3 +138,15 @@ def update_dish(db: Session, item: Dishes_IN,
     db.commit()
     db.refresh(dish)
     return dish
+
+
+def drop_dish(db: Session, menu_id: int, submenu_id: int, dish_id: int):
+    dish = db.query(Dish_DB).join(Sub_Menu_DB).filter(Dish_DB.id == dish_id,
+                                                      Dish_DB.submenu_id == submenu_id,
+                                                      Sub_Menu_DB.menu_id == menu_id).first()
+    if not dish:
+        return JSONResponse(status_code=404,
+                            content={"message": "dish not found"})
+    db.delete(dish)
+    db.commit()
+    return {"status": "true", "message": "The dish has been deleted"}
